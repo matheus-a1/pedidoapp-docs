@@ -1,3 +1,5 @@
+[![Logo](https://inlocsistemas.com.br/wp-content/uploads/2021/04/logo.png)](https://inlocsistemas.com.br)
+
 # Documentação do webApp pedidoApp
 
 O pedidoApp é um sistema web voltado para gestão de pedidos e pagamentos, ideal para estabelecimentos como bares e restaurantes. Ele oferece diversas funcionalidades para facilitar o processo de pedido e pagamento.
@@ -46,6 +48,7 @@ Para que um pedido seja concluído com sucesso, as seguintes regras de negócio 
 
 - O **pedido não deve conter itens se o ponto de produção estiver configurado para emitir tickets**; caso contrário, a API retornará (`BadRequestException`, Ponto de produção xpto não emite comandas).
 
+### Diagrama de sequência
 ![Diagrama de sequência](regras-de-negócio-do-sistema.webp)
 
 # Documentação APIs da Cielo - Cartão
