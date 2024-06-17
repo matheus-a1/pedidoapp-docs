@@ -22,7 +22,7 @@ O pedidoApp é um sistema web voltado para gestão de pedidos e pagamentos, idea
 
 - **Flexibilidade:** Adaptável para diferentes tipos de estabelecimentos, como bares e restaurantes.
 
-Este documento serve como guia inicial para entender as principais funcionalidades e benefícios do pedidoApp. Para mais detalhes sobre como configurar e utilizar o sistema, consulte a documentação completa disponível no repositório `pedidoApp-docs`. Para mais informações e para acessar nosso site [Inloc Sistemas](https://inlocsistemas.com.br/) 
+Este documento serve como guia inicial para entender as principais funcionalidades e benefícios do pedidoApp. Para mais detalhes sobre como configurar e utilizar o sistema, consulte a documentação completa disponível no repositório `pedidoApp-docs`. Para mais informações visite nosso site [Inloc Sistemas.](https://inlocsistemas.com.br/) 
 
 # Regras de Negócio do Sistema
 
