@@ -1,6 +1,6 @@
 # Documentação do webApp pedidoApp
 
-O pedidoApp é um sistema web voltado para gestão de pedidos e pagamentos, ideal para estabelecimentos como restaurantes. Ele oferece diversas funcionalidades para facilitar o processo de pedido e pagamento.
+O pedidoApp é um sistema web voltado para gestão de pedidos e pagamentos, ideal para estabelecimentos como bares e restaurantes. Ele oferece diversas funcionalidades para facilitar o processo de pedido e pagamento.
 
 ## Funcionalidades
 
@@ -22,7 +22,7 @@ O pedidoApp é um sistema web voltado para gestão de pedidos e pagamentos, idea
 
 - **Flexibilidade:** Adaptável para diferentes tipos de estabelecimentos, como bares e restaurantes.
 
-Este documento serve como guia inicial para entender as principais funcionalidades e benefícios do pedidoApp. Para mais detalhes sobre como configurar e utilizar o sistema, consulte a documentação completa disponível no repositório `pedidoApp-docs`.
+Este documento serve como guia inicial para entender as principais funcionalidades e benefícios do pedidoApp. Para mais detalhes sobre como configurar e utilizar o sistema, consulte a documentação completa disponível no repositório `pedidoApp-docs`. Para mais informações e para acessar nosso site [Inloc Sistemas](https://inlocsistemas.com.br/) 
 
 # Regras de Negócio do Sistema
 
@@ -46,4 +46,19 @@ Para que um pedido seja concluído com sucesso, as seguintes regras de negócio 
 
 - O **pedido não deve conter itens se o ponto de produção estiver configurado para emitir tickets**; caso contrário, a API retornará (`BadRequestException`, Ponto de produção xpto não emite comandas).
 
-![Diagrama de Fluxo](regras-de-negócio-do-sistema.webp)
+![Diagrama de sequência](regras-de-negócio-do-sistema.webp)
+
+# Documentação APIs da Cielo - Cartão
+
+## Fluxo pedido com Cartão de débito
+Criação de um pedido e cobrança no cartão de débito.
+- Diagrama de sequência (Débito)
+
+## Fluxo pedido com cartão de crédito
+Criação de um pedido e cobrança no cartão de crédito.
+- Diagrama de sequência (Crédito)
+
+
+# Documentação APIs da Cielo - Pix
+Criação de um pedido e cobrança no Pix.
+- Diagrama de sequência (Pix)
