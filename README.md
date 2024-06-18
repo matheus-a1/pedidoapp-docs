@@ -174,7 +174,7 @@ Com o sales response e processado a resposta do pagamento.
 ```
 
 ### Diagrama de sequência Débito
-![Diagrama de sequência Débito](regras-de-negócio-do-sistema.webp)
+![Diagrama de sequência Débito](fluxo_pedido_app_cartao_debito.png)
 
 ## Fluxo pedido com cartão de crédito
 Criação de um pedido e cobrança no cartão de crédito.
