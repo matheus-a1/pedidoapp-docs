@@ -61,7 +61,7 @@ Este documento descreve como criar um pedido e realizar cobranças utilizando ca
 
 1. **Inicialização da Requisição do Token 3DS:**
 
-   O método `prepareProcessDebitCard` é utilizado para iniciar a requisição do token 3DS. Aqui está um exemplo em Java:
+   O método `prepareProcessDebitCard` é utilizado para iniciar a requisição do token 3DS.
 
    ```java
    public String prepareProcessDebitCard() {
