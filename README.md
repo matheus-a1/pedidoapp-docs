@@ -155,8 +155,10 @@ Este documento descreve como criar um pedido e realizar cobranças utilizando ca
 ![Diagrama de sequência Débito](fluxo_pedido_app_cartao_debito.png)
 
 ## Fluxo pedido com cartão de crédito
-Criação de um pedido e cobrança no cartão de crédito.
-- Diagrama de sequência (Crédito)
+A criação de um pedido e cobrança no cartão de crédito segue um fluxo semelhante ao do débito, porém não utiliza a implementação do 3D Secure.
+
+### Diagrama de sequência Crédito
+![Diagrama de sequência Crédito](fluxo_pedido_app_cartao_credito.png)
 
 
 # Documentação APIs da Cielo - Pix
