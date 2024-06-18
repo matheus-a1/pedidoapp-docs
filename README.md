@@ -55,7 +55,126 @@ Para que um pedido seja concluído com sucesso, as seguintes regras de negócio 
 
 ## Fluxo pedido com Cartão de débito
 Criação de um pedido e cobrança no cartão de débito.
-- Diagrama de sequência (Débito)
+- Todos os campos devem ser preechidos
+
+- **Para criar um pedido e fazer a cobrança em um cartão de débito e nessesacio fazer autenticação 3DS seguindo o seguinte fluxo**
+
+- O metodo prepareProcessDebitCard e chamado para iniciar a requisição do token3ds 
+
+```java
+	public String prepareProcessDebitCard() {
+		try {
+			// Outros métodos
+			if (this.validate()) {
+				this.debitCardToken = this.paymentCardService.create3DSToken(); // 
+				this.preparedDebitCard = true;
+			}
+			return "";
+		} catch (Exception e) {
+			e.printStackTrace(); // GERAR LOG
+			showErrorMessage("Erro", "Erro ao finalizar pedido, tente novamente!");
+		}
+		return "";
+	}
+```  
+Para criação do 3ds-token e chamado o end point @get/v1/payment-cards/3ds-token no pedidoAppApi que por sua ver faz a requisição no  pagamentosApiCIELO @get/v1/card/3ds-token
+solicitando um token a cielo no @post/v2/auth/token para autenticar a transação. 
+
+- Apos a criação do 3ds-token e chamado api de autenticação da cielo para validar os dados atraves do [Script cielo.](https://developercielo.github.io/manual/3ds#integra%C3%A7%C3%A3o-do-script)
+
+- Com os dados do pedido e chamado o createOrderWithCard para iniciar o processo de criação e cobrança do pedido
+```java
+	public String finalizeDebitCard() {
+		try {
+			this.preparedDebitCard = false;
+
+			String cavv = null;
+			String xid = null;
+			String eci = null;
+			String version = null;
+			String referenceId = null;
+
+			Map<String, String> requestParamMap = FacesContext.getCurrentInstance().getExternalContext()
+					.getRequestParameterMap();
+
+			if (requestParamMap.containsKey("cavv")) {
+				cavv = requestParamMap.get("cavv");
+			} else {
+				throw new Exception("Cavv não retornado!");
+			}
+			if (requestParamMap.containsKey("xid")) {
+				xid = requestParamMap.get("xid");
+			} else {
+				throw new Exception("Xid não retornado!");
+			}
+			if (requestParamMap.containsKey("eci")) {
+				eci = requestParamMap.get("eci");
+			} else {
+				throw new Exception("Eci não retornado!");
+			}
+			if (requestParamMap.containsKey("version")) {
+				version = requestParamMap.get("version");
+			} else {
+				throw new Exception("Version não retornado!");
+			}
+			if (requestParamMap.containsKey("referenceId")) {
+				referenceId = requestParamMap.get("referenceId");
+			} else {
+				throw new Exception("ReferenceId não retornado!");
+			}
+
+			this.orderService.createOrderWithCard(CheckOrderController.getBean().getOrder(), this.deliveryPointId,
+					this.paymentCardSelected, this.cvv, cavv, xid, eci, version, referenceId, this.saveNewCard);
+
+			CheckOrderController.getBean().clearOrder();
+			showInfoMessage("Sucesso", "Pedido finalizado com sucesso!");
+			return MenuController.URL;
+		} catch (ClientException e) {
+			if (e.getDetails() != null && !e.getDetails().isEmpty()) {
+				e.getDetails().stream().forEach(it -> {
+					showErrorMessage("Erro", it);
+				});
+			} else {
+				showErrorMessage("Erro", e.getMessage());
+			}
+		} catch (Exception e) {
+			e.printStackTrace(); // GERAR LOG
+			showErrorMessage("Erro", "Erro ao finalizar pedido, tente novamente!");
+		}
+		return "";
+	}
+
+```
+- O createOrderWithCard chama o client que faz uma chamada no pedidoappapi @post/v1/orders/card/ que inicializa o processamento do pedido 
+
+-Detro do processamento do pedido o método processCieloTransactionCard faz a chamada do create(saleRequestDTO) que faz uma request na pagamentosApiCIELO @post/v1/payment/pay que por sua vez faz a requisição para cielo no @post/1/sales obtendo SaleResponseDTO da cielo.      
+Com o sales response e processado a resposta do pagamento.
+
+```java
+    processCieloTransactionCard(
+    // Outros métodos
+    try {
+           saleResponse = this.paymentApiCieloClient.create(saleRequestDTO);
+		} catch (Exception e) {
+			LOGGER.error("Erro ao conectar a api de pagamentos! " + e.getMessage()); 
+			throw new InternalServerException("Erro ao conectar a api de pagamentos! ");
+		}
+        if (saleResponse.getPayment().getStatus() == 2) {
+             // Outros métodos
+            }
+        } else if (saleResponse.getPayment().getStatus() == 3) {
+            throw new UnauthorizedException("Pagamento negado por Autorizador!");
+        } else if (saleResponse.getPayment().getStatus() == 13) {
+            throw new UnprocessableEntityException("Pagamento cancelado por falha no processamento ou por ação do Antifraude!");
+        } else {
+            throw new InternalServerException("Erro ao processar pagamento!");
+        }
+   // Outros métodos
+   
+```
+
+### Diagrama de sequência Débito
+![Diagrama de sequência Débito](regras-de-negócio-do-sistema.webp)
 
 ## Fluxo pedido com cartão de crédito
 Criação de um pedido e cobrança no cartão de crédito.
