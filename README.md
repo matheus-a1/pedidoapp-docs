@@ -49,7 +49,7 @@ Para que um pedido seja concluído com sucesso, as seguintes regras de negócio 
 - O **pedido não deve conter itens se o ponto de produção estiver configurado para emitir tickets**; caso contrário, a API retornará (`BadRequestException`, Ponto de produção xpto não emite comandas).
 
 ### Diagrama de sequência
-![Diagrama de sequência](regras-de-negócio-do-sistema.webp)
+![Diagrama de sequência](regras-de-negócio-do-sistema.png)
 
 # Documentação APIs da Cielo - Cartão
 
