@@ -160,7 +160,137 @@ A criação de um pedido e cobrança no cartão de crédito segue um fluxo semel
 ### Diagrama de sequência Crédito
 ![Diagrama de sequência Crédito](fluxo_pedido_app_cartao_credito.png)
 
+### Documentação APIs da Cielo - Pix
 
-# Documentação APIs da Cielo - Pix
-Criação de um pedido e cobrança no Pix.
-- Diagrama de sequência (Pix)
+A seguir está o fluxo passo a passo para criação de um pedido e cobrança utilizando o meio de pagamento PIX.
+
+1. **Iniciar Pedido com Pix**
+   - O método `finalizePix` é chamado para iniciar o pedido do QR code do Pix.
+
+   ```java
+   public String finalizePix() {
+       try {
+           this.preparedPix = false;
+           if (this.validate()) {
+               BuyWithPix buyWithPix = this.orderService.createOrderWithPix(CheckOrderController.getBean().getOrder(),
+                       this.deliveryPointId);
+               // Verificação dos parâmetros retornados
+               // ...
+           }
+       } catch (ClientException e) {
+           if (e.getDetails() != null && !e.getDetails().isEmpty()) {
+               e.getDetails().stream().forEach(it -> {
+                   showErrorMessage("Erro", it);
+               });
+           } else {
+               showErrorMessage("Erro", e.getMessage());
+           }
+       } catch (Exception e) {
+           e.printStackTrace(); // GERAR LOG
+           showErrorMessage("Erro", "Erro ao finalizar pedido, tente novamente!");
+       }
+       return "";
+   }
+   ```
+
+2. **Requisição de Criação do Pedido**
+   - O cliente faz uma requisição no **pedidoAppApi** no endpoint `@post/v1/orders/pix/`.
+
+3. **Validação do Pedido**
+   - O `saleAvailability` verifica se o pedido é válido e atende às regras de negócio (ver regras acima).
+
+4. **Criação do Pedido**
+   - O método `create(saleRequestDTO)` faz a chamada do `PaymentApiCieloClient` para a API **InlocPagamentosAPICielo** no endpoint `@post/v1/payment/pay`.
+
+5. **Processamento do Pedido na Cielo**
+   - Na **InlocPagamentosAPICielo**, o `PaymentService` faz uma request `@post/1/sales` na **Cielo**, esperando uma `salesResponseDTO` como resposta.
+
+6. **Resposta da Cielo**
+   - A **Cielo** retorna o `SaleResponseDTO` para **InlocPagamentosAPICielo**, que por sua vez retorna para **pedidoAppApi**, e então os dados do Pix são enviados ao front end para o usuário realizar o pagamento.
+
+7. **WebSocket para Atualização de Status**
+   - Após a criação do QR code, um WebSocket é inicializado no **InlocPagamentosAPICielo** (`WebSocket/{id}`), aguardando uma mensagem de resposta.
+
+8. **Notificação de Mudança de Status**
+   - Quando há mudanças no status de uma transação, a **Cielo** faz um `@post/v1/cielo/notification` informando a mudança, que aciona o método `processPix` para retornar a resposta ao WebSocket com o `{id}` correspondente.
+
+   ```java
+   private void processPix(SaleResponseDTO saleResponse, CieloCallback cieloCallback) throws Exception {
+       if (saleResponse.getPayment().getStatus() == 2) {
+           this.pixProducer.sendStatus(
+               cieloCallback.getTransactionId(),
+               PixStatusDTO.builder()
+                   .type(PixStatusDTO.Type.SUCCESS)
+                   .build()
+           );
+       } else if (saleResponse.getPayment().getStatus() == 3) {
+           this.pixProducer.sendStatus(
+               cieloCallback.getTransactionId(),
+               PixStatusDTO.builder()
+                   .type(PixStatusDTO.Type.ERROR)
+                   .message("Pagamento negado por Autorizador!")
+                   .build()
+           );
+       } else if (saleResponse.getPayment().getStatus() == 13) {
+           this.pixProducer.sendStatus(
+               cieloCallback.getTransactionId(),
+               PixStatusDTO.builder()
+                   .type(PixStatusDTO.Type.ERROR)
+                   .message("Pagamento cancelado por falha no processamento ou por ação do Antifraude!")
+                   .build()
+           );
+       } else {
+           this.pixProducer.sendStatus(
+               cieloCallback.getTransactionId(),
+               PixStatusDTO.builder()
+                   .type(PixStatusDTO.Type.ERROR)
+                   .message("Erro ao processar pagamento!")
+                   .build()
+           );
+       }
+   }
+   ```
+
+9. **Confirmação do Pedido**
+   - O `PixStatusDTO` é enviado para o WebSocket com o `{id}` correspondente para finalizar o pedido através do `confirmPix`.
+
+   ```java
+   public String confirmPix() {
+       try {
+           if (this.statusPix.equals("SUCCESS")) {
+               // finaliza pix 
+               this.orderService.finalizerOrderWithPix(transactionIdPix);
+               
+               CheckOrderController.getBean().clearOrder();
+               showInfoMessage("Sucesso", "Pedido finalizado com sucesso!");
+               return MenuController.URL;
+           } else {
+               showErrorMessage("Erro", this.messagePix);
+           }
+           this.transactionIdPix = null;
+           this.qrcodeBase64 = null;
+           this.qrCode = null;
+           this.preparedPix = false;
+           this.statusPix = null;
+           this.messagePix = null;
+           
+       } catch (ClientException e) {
+           if (e.getDetails() != null && !e.getDetails().isEmpty()) {
+               e.getDetails().stream().forEach(it -> {
+                   showErrorMessage("Erro", it);
+               });
+           } else {
+               showErrorMessage("Erro", e.getMessage());
+           }		
+       } catch (Exception e) {
+           e.printStackTrace(); // GERAR LOG
+           showErrorMessage("Erro", "Erro ao finalizar pedido, tente novamente!");
+       }
+       return "";
+   }
+   ```
+
+10. **Finalização do Pedido**
+    - Por fim, é chamado o método `finalizerOrderWithPix` no endpoint `@post/v1/orders/pix/finalizer/{id}`, concluindo assim o pedido.### Diagrama de sequência (Pix)
+    
+![Diagrama de sequência Crédito](fluxo_pedido_app_pix.png)
