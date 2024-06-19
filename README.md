@@ -291,6 +291,7 @@ A seguir está o fluxo passo a passo para criação de um pedido e cobrança uti
    ```
 
 10. **Finalização do Pedido**
-    - Por fim, é chamado o método `finalizerOrderWithPix` no endpoint `@post/v1/orders/pix/finalizer/{id}`, concluindo assim o pedido.### Diagrama de sequência (Pix)
+    - Por fim, é chamado o método `finalizerOrderWithPix` no endpoint `@post/v1/orders/pix/finalizer/{id}`, concluindo assim o pedido.
     
+### Diagrama de sequência (Pix)    
 ![Diagrama de sequência Crédito](fluxo_pedido_app_pix.png)
