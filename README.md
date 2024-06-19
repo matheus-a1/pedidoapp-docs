@@ -14,7 +14,7 @@ O pedidoApp é um sistema web voltado para gestão de pedidos e pagamentos, idea
 
 - **Utilização por Garçom:** Pode ser utilizado por garçons para realizar pedidos, facilitando o atendimento e melhorando a experiência do cliente.
 
-- **Sistema de Pagamento Integrado com API da Cielo:** Integração com a API de pagamento da Cielo, permitindo pagamentos seguros e eficientes através de diversas modalidades como PIX, cartão de crédito e débito.
+- **Sistema de Pagamento Integrado com API [Cielo](https://developercielo.github.io/):** Integração com a API de pagamento da Cielo, permitindo pagamentos seguros e eficientes através de diversas modalidades como PIX, cartão de crédito e débito.
 
 ## Benefícios
 
