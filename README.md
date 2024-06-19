@@ -197,7 +197,7 @@ A seguir está o fluxo passo a passo para criação de um pedido e cobrança uti
    - O cliente faz uma requisição no **pedidoAppApi** no endpoint `@post/v1/orders/pix/`.
 
 3. **Validação do Pedido**
-   - O `saleAvailability` verifica se o pedido é válido e atende às regras de negócio (ver regras acima).
+   - O `saleAvailability` verifica se o pedido é válido e atende às [regras de negócio.](https://github.com/matheus-a1/pedidoapp-docs/blob/main/README.md#regras-de-neg%C3%B3cio---pedido)
 
 4. **Criação do Pedido**
    - O método `create(saleRequestDTO)` faz a chamada do `PaymentApiCieloClient` para a API **InlocPagamentosAPICielo** no endpoint `@post/v1/payment/pay`.
